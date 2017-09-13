@@ -91,7 +91,7 @@ public class Robot extends IterativeRobot {
     		gearAutoChoose.addDefault("Keep gates closed in auto", "Keep gates closed in auto");
     		SmartDashboard.putData("Auto mode", autoChoose);
     		SmartDashboard.putData("Gates in auto chooser", gearAutoChoose);
-    		SmartDashboard.putNumber("ShooterSpeedAdjust", Shooter.getSpeed());
+    		
     		System.out.println("Robot Init time: "+(Timer.getFPGATimestamp()-initTime));
         	//RobotMap.g.calibrate();
         	
