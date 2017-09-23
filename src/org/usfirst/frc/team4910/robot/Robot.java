@@ -91,7 +91,8 @@ public class Robot extends IterativeRobot {
     		gearAutoChoose.addDefault("Keep gates closed in auto", "Keep gates closed in auto");
     		SmartDashboard.putData("Auto mode", autoChoose);
     		SmartDashboard.putData("Gates in auto chooser", gearAutoChoose);
-    		
+    		SmartDashboard.putNumber("ShooterSpeedAdjust", Shooter.getSpeed());
+	    	SmartDashboard.putNumber("FeederPower", Shooter.getFeeder());
     		System.out.println("Robot Init time: "+(Timer.getFPGATimestamp()-initTime));
         	//RobotMap.g.calibrate();
         	
@@ -333,8 +334,8 @@ public class Robot extends IterativeRobot {
         	//check for c.enabled() so we aren't start()ing as we're compressing
 			if(RobotMap.c.enabled()
 					&&(
-						RobotMap.gearShifter.get().equals(DoubleSolenoid.Value.kForward)
-						|| Math.abs(RobotMap.shootControl.get())>.2 
+						//RobotMap.gearShifter.get().equals(DoubleSolenoid.Value.kForward) Changed so compressor won't shut off if gear is shifted
+							Math.abs(RobotMap.shootControl.get())>.2 
 						|| elev.getElevatorState().equals(Elevator.ElevatorState.Running)
 						|| Math.abs(RobotMap.climbControl.get())>.2)
 					){
