@@ -25,9 +25,10 @@ public class Shooter {
 	}
 	private ShooterState currentState=ShooterState.Idle;
 	private double loadingStart=0;
-	private static double modifier = .5; //We don't know, we're testing
+	private final static int encoderRange = 100;
+	private static double modifier = .5 * encoderRange; //We don't know, we're testing
 	private static double feeder = .375;
-	private static int idealSpeed = 2400;
+	
 //	private double shootingStart=0;
 //	private double shootKp=0.0;
 	//private double setpoint=SmartDashboard.getNumber("ShootSetpoint", 0.0);
@@ -42,6 +43,7 @@ public class Shooter {
 			//shootingStart=0;
 			//RobotMap.shootPID.setPIDF(0.003, 1.3E-5, 0.0, 8.0E-4);
 			RobotMap.shootPID.setPIDF(RobotMap.shooterKp, RobotMap.shooterKi, RobotMap.shooterKd, RobotMap.shooterKf);
+
 		}
 
 		@Override
@@ -53,7 +55,7 @@ public class Shooter {
 		    	//SmartDashboard.putNumber("ShootErrorSum", RobotMap.shootPID.getErrorSum());
 		    	//SmartDashboard.putNumber("ShootSetpoint", RobotMap.shootPID.getSetpoint());
 		    	//SmartDashboard.putNumber("ShootError", RobotMap.shootPID.getError());
-		    	SmartDashboard.putNumber("Shooter Speed Output", RobotState.getShooterSpeed());
+		    	
 				ShooterState newState;
 				//SmartDashboard.putNumber("ShootSetpoint", setpoint);
 				//shootKp = SmartDashboard.getNumber("ShootKp", 0.0);
@@ -92,9 +94,11 @@ public class Shooter {
 						/**Graham was here =]
 		        		**/
 	        			//RobotMap.shootControl.set(RobotMap.shootPID.calculate(RobotState.getShooterSpeed()));
-						modifier = SmartDashboard.getNumber("ShooterSpeedAdjust", modifier);
+						modifier = SmartDashboard.getNumber("ShooterSpeedAdjust", modifier) * encoderRange;
 						
-	        			RobotMap.shootControl.set(-modifier);
+	        			RobotMap.shootPID.setSetpoint(modifier);
+	        			RobotMap.shootControl.set(-RobotMap.shootPID.calculate(RobotMap.shootControl.getSpeed()));
+						//RobotMap.shootControl.set(-modifier);
 						if(OI.thirdStick.getRawButton(OI.ShooterToggle)){
 							RobotMap.shootControl.set(0);
 							RobotMap.shootGuide.set(0);
@@ -131,24 +135,27 @@ public class Shooter {
 					newState=ShooterState.Shooting;
 					feeder = SmartDashboard.getNumber("FeederPower", feeder);
 					RobotMap.shootGuide.set(feeder);
-					
-					/**if(RobotState.getShooterSpeed <= (idealSpeed -250)){
-						RobotMap.shootControl.set(-modifier);
+					/**
+					if(RobotMap.shootControl.getSpeed() <= (idealSpeed - shooterThreshold)){
+						RobotMap.shootControl.set(-(modifier + .35));
+						System.out.print("\tIncreasing");
 					}
-					else if(RobotState.getShooterSpeed >= (idealSpeed + 250)){
-						RobotMap.shootControl.set(-(modifier + .10));
+					else if(RobotMap.shootControl.getSpeed() >= (idealSpeed + shooterThreshold)){
+						RobotMap.shootControl.set(-(modifier - .20));
+						System.out.print("\tDecreasing");
 					}
 					else{
 						RobotMap.shootControl.set(-modifier);
+						System.out.print("\tNeutral");
 					}**/
 					//RobotMap.shootControl.set((-.60));
 					/**Graham was also here =]
 					**/
-					//RobotMap.shootControl.set(RobotMap.shootPID.calculate(RobotState.getShooterSpeed()));
+					RobotMap.shootControl.set(-RobotMap.shootPID.calculate(RobotMap.shootControl.getSpeed()));
 					
-					RobotMap.shootControl.set(-modifier);
+					
 					//SmartDashboard.putNumber("Shooter Speed Output", RobotState.getShooterSpeed());
-					System.out.println("Shooter Speed:" + RobotMap.shootGuide.getSpeed());
+					System.out.println("Shooter Speed:" + RobotMap.shootControl.getSpeed());
 					if(OI.thirdStick.getRawButton(OI.ShooterToggle)){
 						RobotMap.shootPID.reset();
 						RobotMap.shootControl.set(0);
