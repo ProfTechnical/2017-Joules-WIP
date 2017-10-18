@@ -61,10 +61,10 @@ public class RobotMap {
 //	public static final double GyroSmallKi=0.0;
 //	public static final double GyroSmallKd=0.0;
 	
-	public static final double shooterKp= /*isCompBot ?*/ 0.04186;// : .00237; //.00237
-	public static final double shooterKi= /*isCompBot ?*/ 1.81395E-4;// : 0.869E-5; // 0.869E-5
-	public static final double shooterKd=0.0;
-	public static final double shooterKf= /*isCompBot ?*/ 0.011627;// : 6.3E-4;//6.3E-4
+	public static  double shooterKp= /*isCompBot ?*/ 4.0;// : .00237; //.00237
+	public static  double shooterKi= /*isCompBot ?*/ 0.0;// : 0.869E-5; // 0.869E-5
+	public static  double shooterKd=0.0;
+	public static  double shooterKf= /*isCompBot ?*/ 0.0;// : 6.3E-4;//6.3E-4
 	public static final double shooterGuideKp=0.0;
 	public static final double shooterGuideKd=0.0;
 	public static final double shooterGuideKf=0.0;

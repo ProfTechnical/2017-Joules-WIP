@@ -124,7 +124,7 @@ public class SynchronousPID {
 	        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) + m_F * m_setpoint);
 	        //System.out.println((m_error - m_prevError));
 	        m_prevError = m_error;
-	
+	        
 	        if (m_result > m_maximumOutput) {
 	            m_result = m_maximumOutput;
 	        } else if (m_result < m_minimumOutput) {

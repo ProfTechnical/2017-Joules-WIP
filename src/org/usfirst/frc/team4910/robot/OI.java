@@ -36,9 +36,9 @@ public class OI {
     
     
     //Right Stick buttons
-    public static final int GearShiftToggle=2;
+    public static final int GearShiftToggle= 2;
     public static final int UltrasonicTest=3;
-    public static final int Gates=4;
+    public static final int Gates= 4;
     public static final int PIDDistTest=5;
     public static final int PIDAngleTest=6;
     public static final int AutoTest=7;

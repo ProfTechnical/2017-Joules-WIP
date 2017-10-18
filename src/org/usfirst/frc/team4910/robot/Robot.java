@@ -37,47 +37,47 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
     
-	Thread visionThread;
-	Iterator iteratorEnabled = new Iterator();
-	Iterator iteratorDisabled = new Iterator();
-	public static DriveTrain drive;
-	public static Shooter sh;
-	static Elevator elev;
-	static VisionProcessor vision;
-	static Climber climb;
-	static OI oi;
-	public static Path pat;
-	public static SendableChooser<String> autoChoose;
-	static SendableChooser<String> gearAutoChoose;
-	static boolean compressorEnabled;
-	private boolean tunePID=false;
-	public static double closeLoopTime=0;
+	Thread visionThread; //Thread for Vision Processing
+	Iterator iteratorEnabled = new Iterator(); //Iterator for when the robot is enabled
+	Iterator iteratorDisabled = new Iterator(); //Iterator for when the robot is disabled
+	public static DriveTrain drive; //DriveTrain for controlling Drive related processes and information
+	public static Shooter sh; //Shooter for controlling shooter and agitator
+	static Elevator elev; //Elevator for controlling fuel intake
+	static VisionProcessor vision; //Vision Processor for Vision Processing
+	static Climber climb; //Climber for climbing rope during endgame
+	static OI oi; //Operator Interface: Manages joysticks and buttons
+	public static Path pat; //Path: Autonomous Path for doing auto gears, tells robot where to go
+	public static SendableChooser<String> autoChoose; //Manages different auto modes
+	static SendableChooser<String> gearAutoChoose; //Manages different options for auto gear
+	static boolean compressorEnabled; //Tells if the compressor is started when enabled
+	private boolean tunePID=false; //Manages if the PID loops are editable
+	public static double closeLoopTime=0; //Used in testing for managing how long the loop should take to update
 	
     public void robotInit() {
         try{
-        	double initTime=Timer.getFPGATimestamp();
-        	RobotMap.init();
-        	oi = OI.getInstance();
-        	drive = DriveTrain.getInstance();
-        	sh = Shooter.getInstance();
-        	elev = Elevator.getInstance();
-        	vision = VisionProcessor.getInstance();
-        	climb = Climber.getInstance();
-        	pat = new Path();
-        	CrashTracker.logRobotInit();
-        	iteratorEnabled.register(RobotState.iter);
-        	iteratorEnabled.register(drive.getLoop());
-        	iteratorEnabled.register(sh.getLoop());
-        	iteratorEnabled.register(elev.getLoop());
-        	iteratorEnabled.register(vision.getLoop());
-        	iteratorEnabled.register(climb.getLoop());
-        	iteratorDisabled.register(RobotState.iter);
-        	iteratorDisabled.register(new GyroCalibrator());
-        	resetAllSensors();
+        	double initTime=Timer.getFPGATimestamp(); //Instantiates the Timer for telling how long it took to run robotInit()
+        	RobotMap.init(); //Instantiates all physical objects on the Robot in RobotMap
+        	oi = OI.getInstance(); //Creating the OI; if the OI doesn't exist, it creates one
+        	drive = DriveTrain.getInstance(); //"" for DriveTrain
+        	sh = Shooter.getInstance(); //"" for Shooter
+        	elev = Elevator.getInstance(); //"" for Fuel Intake
+        	vision = VisionProcessor.getInstance(); //"" for Vision Processing
+        	climb = Climber.getInstance(); //"" for Climber
+        	pat = new Path(); //Creates the autonomous Path object
+        	CrashTracker.logRobotInit(); //Starts Crash logger in case we run into errors
+        	iteratorEnabled.register(RobotState.iter); //Adds the Iterateable object in RobotState to enabled Iterator
+        	iteratorEnabled.register(drive.getLoop()); //Adds DriveTrain thread to enabled Iterator
+        	iteratorEnabled.register(sh.getLoop()); //Adds Shooter thread to enabled Iterator
+        	iteratorEnabled.register(elev.getLoop()); //Adds Elevator thread to enabled Iterator
+        	iteratorEnabled.register(vision.getLoop()); //Adds VisionProcessor thread to enabled Iterator
+        	iteratorEnabled.register(climb.getLoop()); //Adds Climber thread to enabled Iterator
+        	iteratorDisabled.register(RobotState.iter); //Adds RobotState Iterateable object to disabled Iterator
+        	iteratorDisabled.register(new GyroCalibrator()); //Adds a GyroCalibrator to the disabled Iterator, it calibrates the Gyros
+        	resetAllSensors(); //This sets the positions of the Drive Train encoders to 0, and resets Gyro
         	
         	
-    		autoChoose = new SendableChooser<String>();
-    		autoChoose.addObject("POSITION CHOOSER", "0");
+    		autoChoose = new SendableChooser<String>(); //Instantiates the Auto Mode Chooser
+    		autoChoose.addObject("POSITION CHOOSER", "0"); //Lines 80-88 are adding the different auto modes to the Smart Dashboard
     		autoChoose.addDefault("Do Nothing", "Do Nothing");
     		autoChoose.addObject("Red Left", "Red Left");
     		autoChoose.addObject("Red Middle", "Red Middle");
@@ -86,19 +86,23 @@ public class Robot extends IterativeRobot {
     		autoChoose.addObject("Blue Middle", "Blue Middle");
     		autoChoose.addObject("Blue Right", "Blue Right");
     		autoChoose.addObject("Just go forward", "Just go forward");
-    		gearAutoChoose = new SendableChooser<String>();
-    		gearAutoChoose.addObject("Open gates in auto", "Open gates in auto");
+    		gearAutoChoose = new SendableChooser<String>(); //Instantiates the Options Menu for additional properties for Auto
+    		gearAutoChoose.addObject("Open gates in auto", "Open gates in auto"); //Lines 90 and 91 add the different options for auto gear
     		gearAutoChoose.addDefault("Keep gates closed in auto", "Keep gates closed in auto");
-    		SmartDashboard.putData("Auto mode", autoChoose);
-    		SmartDashboard.putData("Gates in auto chooser", gearAutoChoose);
-    		SmartDashboard.putNumber("ShooterSpeedAdjust", Shooter.getSpeed());
-	    	SmartDashboard.putNumber("FeederPower", Shooter.getFeeder());
-    		System.out.println("Robot Init time: "+(Timer.getFPGATimestamp()-initTime));
+    		SmartDashboard.putData("Auto mode", autoChoose); //Sends info to the SmartDashboard about what auto mode we are in
+    		SmartDashboard.putData("Gates in auto chooser", gearAutoChoose); //This tells if the gates are open or closed during auto
+    		SmartDashboard.putNumber("ShooterSpeedAdjust", Shooter.getSpeed()); //Allows the drivers to update the shooter speed, if necessary; Used for testing
+	    	SmartDashboard.putNumber("FeederPower", Shooter.getFeeder()); //"" as above, but with the agitator instead
+	    	SmartDashboard.putNumber("Shooter kP", RobotMap.shooterKp);
+	    	SmartDashboard.putNumber("Shooter kI", RobotMap.shooterKi);
+	    	SmartDashboard.putNumber("Shooter kD", RobotMap.shooterKd);
+	    	SmartDashboard.putNumber("Shooter kF", RobotMap.shooterKf);
+    		System.out.println("Robot Init time: "+(Timer.getFPGATimestamp()-initTime)); //Prints the runtime of robotInit in the console
         	//RobotMap.g.calibrate();
         	
         }catch(Throwable t){
-        	CrashTracker.logThrowableCrash(t);
-        	throw t;
+        	CrashTracker.logThrowableCrash(t); //if there's an error, the CrashTracker will log it
+        	throw t; //Throws whatever error we got
         }
     }
     
@@ -352,9 +356,9 @@ public class Robot extends IterativeRobot {
 					RobotMap.gearShifter.set(DoubleSolenoid.Value.kForward);
 					System.out.println("High gear");
 				}
-				while(OI.rightStick.getRawButton(OI.GearShiftToggle));
-				
+				while(OI.rightStick.getRawButton(OI.GearShiftToggle));	
 			}
+			
 			if(OI.rightStick.getRawButton(OI.Gates)){
 				if(RobotMap.gates.get().equals(DoubleSolenoid.Value.kForward)){
 					RobotMap.gates.set(DoubleSolenoid.Value.kReverse);
