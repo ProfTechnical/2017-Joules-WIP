@@ -51,9 +51,9 @@ public class RobotMap {
 	public static final double VelocityKd=0.0;
 	public static final double VelocityKf1=0.0053;
 	public static final double VelocityKf2=0.0053;
-	public static final double GyroKp= isCompBot ? 0.0325: 0.0308; //0.0325 (high gear)
+	public static final double GyroKp= isCompBot ? 0.0325: 0.0308; //0.0325 For Previous Value
 	public static final double GyroKi=0.0; //0.0013
-	public static final double GyroKd= isCompBot ? 0.026: 0.0257; //1.0
+	public static final double GyroKd= isCompBot ? 0.03: 0.03; //.026 For Previous Value
 	
 	//Our solution for not needing this was just starting in low gear
 	//Apparently, the shifter gears actually have a use for me.
@@ -61,10 +61,10 @@ public class RobotMap {
 //	public static final double GyroSmallKi=0.0;
 //	public static final double GyroSmallKd=0.0;
 	
-	public static  double shooterKp= /*isCompBot ?*/ 4.0;// : .00237; //.00237
-	public static  double shooterKi= /*isCompBot ?*/ 0.0;// : 0.869E-5; // 0.869E-5
-	public static  double shooterKd=0.0;
-	public static  double shooterKf= /*isCompBot ?*/ 0.0;// : 6.3E-4;//6.3E-4
+	public static final double shooterKp= /*isCompBot ?*/ 4.0;// : .00237; //.00237
+	public static final double shooterKi= /*isCompBot ?*/ 0.0;// : 0.869E-5; // 0.869E-5
+	public static final double shooterKd=0.25;
+	public static final double shooterKf= /*isCompBot ?*/ 0.0;// : 6.3E-4;//6.3E-4
 	public static final double shooterGuideKp=0.0;
 	public static final double shooterGuideKd=0.0;
 	public static final double shooterGuideKf=0.0;

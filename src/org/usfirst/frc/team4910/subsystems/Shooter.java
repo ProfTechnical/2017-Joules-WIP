@@ -27,7 +27,7 @@ public class Shooter {
 	private double loadingStart=0;
 	private final static int encoderRange = 100;
 	private static double modifier = .5 /* encoderRange*/; //We don't know, we're testing
-	private static double feeder = .375;
+	private static double feeder = .45;
 	private static double idealSpeed = modifier*100 -(.1*(modifier*100));
 	private static double shooterThreshold = 3;
 //	private double shootingStart=0;
@@ -42,10 +42,7 @@ public class Shooter {
 			currentState=ShooterState.Idle;
 			loadingStart=0;
 			
-	    	RobotMap.shooterKp = SmartDashboard.getNumber("Shooter kP", RobotMap.shooterKp);
-	    	RobotMap.shooterKi = SmartDashboard.getNumber("Shooter kI", RobotMap.shooterKi);
-	    	RobotMap.shooterKd = SmartDashboard.getNumber("Shooter kD", RobotMap.shooterKd);
-	    	RobotMap.shooterKf = SmartDashboard.getNumber("Shooter kF", RobotMap.shooterKf);
+	    	
 			//shootingStart=0;
 			//RobotMap.shootPID.setPIDF(0.003, 1.3E-5, 0.0, 8.0E-4);
 			RobotMap.shootPID.setPIDF(RobotMap.shooterKp, RobotMap.shooterKi, RobotMap.shooterKd, RobotMap.shooterKf);
@@ -102,7 +99,7 @@ public class Shooter {
 						modifier = SmartDashboard.getNumber("ShooterSpeedAdjust", modifier);
 						
 	        			RobotMap.shootPID.setSetpoint(modifier);
-	        			RobotMap.shootControl.set(-RobotMap.shootPID.calculate((RobotMap.shootControl.getSpeed()/100)));
+	        			RobotMap.shootControl.set(-RobotMap.shootPID.calculate(RobotMap.shootControl.getSpeed()/100));
 						//RobotMap.shootControl.set(-modifier);
 						if(OI.thirdStick.getRawButton(OI.ShooterToggle)){
 							RobotMap.shootControl.set(0);
@@ -156,7 +153,8 @@ public class Shooter {
 					//RobotMap.shootControl.set((-.60));
 					/**Graham was also here =]
 					**/
-					RobotMap.shootControl.set(-RobotMap.shootPID.calculate((RobotMap.shootControl.getSpeed()/100)));
+					RobotMap.shootGuide.set(feeder);
+					RobotMap.shootControl.set(-RobotMap.shootPID.calculate(RobotMap.shootControl.getSpeed()/100));
 					//RobotMap.shootControl.set(-modifier);
 					
 					//SmartDashboard.putNumber("Shooter Speed Output", RobotState.getShooterSpeed());

@@ -403,7 +403,7 @@ public class Robot extends IterativeRobot {
     
     public void testPeriodic() {
         try{
-        	
+        	System.out.println("Ultra: " + RobotMap.ultra.getVoltage());
         }catch(Throwable t){
         	CrashTracker.logThrowableCrash(t);
         	throw t;
@@ -868,13 +868,13 @@ public class Robot extends IterativeRobot {
      * 
      */
     private void middleAutoAlternate(){
-    
+    	
 		pat.register(PathType.Position, -94+38.5);
 		pat.Iterate();
 		
     	vision.startPegTracking();
     	while(vision.getCurrentIteration()<=4);
-    	double vang=-vision.getAveragePegAngle();
+    	double vang=-((vision.getAveragePegAngle()/2) - 2);
     	//double vdist=-vision.getAveragePegDistance();
     	vision.stopPegTracking();
     	//vang+=4.0;
@@ -884,7 +884,7 @@ public class Robot extends IterativeRobot {
 		
 		Timer.delay(.07);
 		double ult = ((((RobotMap.ultra.getVoltage()) * 3.47826087) - 0.25)*12.0)-6.0;
-		pat.register(PathType.Position, -11.5-ult); //was -12, then -7.5
+		pat.register(PathType.Position, -9-ult); //was -12, then -7.5
 		pat.Iterate();
 		
 		
